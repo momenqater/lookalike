@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wanis</title>
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card p-4 shadow-sm" style="width: 350px;">
+            <h1 class="text-center mb-4">Log in to Your Account</h1>
+
+            <!-- Django Flash Messages -->
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <form>
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="username" placeholder="Email or phone number"
+                        required />
+                </div>
+                <div class="mb-3">
+                    <input type="password" class="form-control" id="password" placeholder="Password" required />
+                </div>
+                <button type="submit" class="btn btn-primary w-100" id="loginBtn">Log In</button>
+            </form>
+            <div class="mt-3 text-center" style="font-size: 14px;">
+                <a href="#" style="color: #1877f2; text-decoration: none;">Forgotten password?</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="video-container" class="position-fixed top-0 left-0 w-100 h-100 d-none bg-dark" style="z-index: 1000;">
+        <iframe id="player" class="w-100 h-100 border-0" allow="autoplay; fullscreen"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+        </iframe>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.getElementById('loginBtn').addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // Optional: fake loading state
+            this.textContent = 'Logging in...';
+            this.disabled = true;
+
+            // Small delay for realism
+            setTimeout(() => {
+                // Hide login form
+                document.querySelector('.card').style.display = 'none';
+
+                // Show video container
+                const videoContainer = document.getElementById('video-container');
+                videoContainer.classList.remove('d-none');  // Show the video container
+                videoContainer.classList.add('d-block');    // Ensure it's displayed as a block
+
+                // Set the iframe src with autoplay & unmuted
+                const iframe = document.getElementById('player');
+                const videoId = 'SXHMnicI6Pg';
+                iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=0&modestbranding=1&rel=0`;
+
+                // Try to go fullscreen
+                const requestFullScreen = iframe.requestFullscreen ||
+                    iframe.webkitRequestFullscreen ||
+                    iframe.mozRequestFullScreen ||
+                    iframe.msRequestFullscreen;
+
+                if (requestFullScreen) {
+                    requestFullScreen.call(iframe).catch(() => {
+                        // Some browsers might block it
+                    });
+                }
+            }, 1000);
+        });
+
+        // Allow pressing "Enter" to trigger login
+        document.getElementById('password').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('loginBtn').click();
+            }
+        });
+    </script>
+</body>
+
+</html>
